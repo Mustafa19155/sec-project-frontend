@@ -18,7 +18,10 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import { addSingleCampaign } from "../redux/actions/campaignActions";
+import {
+  addSingleCampaign,
+  deleteSingleCampaign,
+} from "../redux/actions/campaignActions";
 
 const useStyles = makeStyles((theme) => ({
   itemImg: {
@@ -45,47 +48,39 @@ const useStyles = makeStyles((theme) => ({
   textField: {},
 }));
 
-function Campaign() {
+function DeleteCampaign() {
   const dispatch = useDispatch();
 
   const [campaignName, setcampaignName] = useState("");
-  const [mapName, setmapName] = useState("");
-  const [characterName, setcharacterName] = useState("");
   const [submitClicked, setsubmitClicked] = useState(false);
   const [error, seterror] = useState(false);
   const [success, setsuccess] = useState(false);
-
-  const maps = useSelector((state) => state.maps);
-  const characters = useSelector((state) => state.characters);
-  const user = useSelector((state) => state.user);
 
   let userData = JSON.parse(localStorage.getItem("validation"));
 
   const history = useHistory();
 
-  const startCampaign = () => {
-    if (campaignName != "" && mapName != "" && characterName != "") {
+  const deleteCampaign = () => {
+    if (campaignName != "") {
       seterror(false);
       setsubmitClicked(true);
+
       axios({
         headers: {
           "auth-token": userData.authToken,
         },
-        method: "post",
-        url: `${process.env.REACT_APP_BASE_URL}/campaign/addCampaign`,
+        method: "delete",
+        url: `${process.env.REACT_APP_BASE_URL}/campaign//deleteCampaign`,
         data: {
-          name: campaignName,
-          character: characterName,
-          map: mapName,
-          startedBy: user.name,
-          progress: 0,
+          campaignName: campaignName,
         },
       })
         .then((res) => {
-          dispatch(addSingleCampaign(res.data.mapDetails));
+          console.log(res);
+          dispatch(deleteSingleCampaign(campaignName));
           // history.push("/campaign");
-          setsuccess(true);
           seterror(false);
+          setsuccess(true);
         })
         .catch((err) => {
           seterror(true);
@@ -106,17 +101,17 @@ function Campaign() {
             variant="h1"
             sx={{ textAlign: "center" }}
           >
-            Start New Campaign
+            Delete Campaign
           </Typography>
         </Box>
         {error && (
           <Typography variant="h4" sx={{ color: "red", textAlign: "center" }}>
-            Map Name Already Exists
+            Campaign Not Found
           </Typography>
         )}
         {success && (
           <Typography variant="h4" sx={{ color: "green", textAlign: "center" }}>
-            Campaign Created Successfully
+            Campaign Successfully Deleted
           </Typography>
         )}
         <Box>
@@ -151,80 +146,11 @@ function Campaign() {
               sx={{ margin: "auto", marginTop: "70px" }}
             >
               <Grid item xs={12} sm={6}>
-                <Typography className={classes.btnText} variant="h4">
-                  Select Map
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl className={classes.dropdown}>
-                  <InputLabel id="map-select-label" sx={{ color: "white" }}>
-                    Map
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="map-select-input"
-                    label="Map"
-                    sx={{ color: "white" }}
-                    onChange={(e) => {
-                      setmapName(e.target.value);
-                      // setmapName(value);
-                    }}
-                  >
-                    {maps.map((map) => (
-                      <MenuItem value={map._id} key={map._id}>
-                        {map.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              columnSpacing={10}
-              sx={{ margin: "auto", marginTop: "70px" }}
-            >
-              <Grid item xs={12} sm={6}>
-                <Typography className={classes.btnText} variant="h4">
-                  Select Character
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl className={classes.dropdown}>
-                  <InputLabel
-                    id="character-select-label"
-                    sx={{ color: "white" }}
-                  >
-                    Character
-                  </InputLabel>
-                  <Select
-                    id="charcter-select-input"
-                    label="Map"
-                    sx={{ color: "white" }}
-                    onChange={(e) => {
-                      setcharacterName(e.target.value);
-                    }}
-                  >
-                    {characters.map((character) => (
-                      <MenuItem value={character._id} key={character._id}>
-                        {character.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              columnSpacing={10}
-              sx={{ margin: "auto", marginTop: "70px" }}
-            >
-              <Grid item xs={12} sm={6}>
                 {/* <Link to="/campaign" style={{ textDecoration: "none" }}> */}
                 <Button
                   variant="primary"
                   className={classes.mainBtn}
-                  onClick={startCampaign}
+                  onClick={deleteCampaign}
                   // fullWidth
                   // variant="contained"
                 >
@@ -236,7 +162,7 @@ function Campaign() {
                     />
                   ) : (
                     <Typography className={classes.btnText} variant="span">
-                      Create Campaign
+                      Delete Campaign
                     </Typography>
                   )}
                 </Button>
@@ -264,4 +190,4 @@ function Campaign() {
   );
 }
 
-export default Campaign;
+export default DeleteCampaign;

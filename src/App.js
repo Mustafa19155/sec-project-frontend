@@ -24,6 +24,7 @@ import Campaign from "./pages/Campaign";
 import newCampaign from "./pages/newCampaign";
 import ViewCampaigns from "./pages/ViewCampaigns";
 import { addCampaign } from "./redux/actions/campaignActions";
+import DeleteCampaign from "./pages/DeleteCampaign";
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -56,7 +57,7 @@ function App() {
           "auth-token": userData.authToken,
         },
         method: "get",
-        url: "http://localhost:8080/campaign/getCampaigns",
+        url: `${process.env.REACT_APP_BASE_URL}/campaign/getCampaigns`,
         params: {
           startedBy: userData.name,
         },
@@ -90,6 +91,10 @@ function App() {
                 component={newCampaign}
               />
               <ProtectedRoute path="/viewCampaigns" component={ViewCampaigns} />
+              <ProtectedRoute
+                path="/deleteCampaign"
+                component={DeleteCampaign}
+              />
             </Layout>
           </Box>
         </Switch>

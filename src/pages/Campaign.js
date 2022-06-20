@@ -105,7 +105,7 @@ function Campaign() {
               </Link>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Link to="/map" style={{ textDecoration: "none" }}>
+              <Link to="/deleteCampaign" style={{ textDecoration: "none" }}>
                 <Button
                   variant="primary"
                   className={classes.mainBtn}
